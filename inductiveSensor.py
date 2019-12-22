@@ -21,7 +21,7 @@ def detectMetal():
   else:
     print("Please Initial Input Pin")
     
-pin = 18
+pin = 27
 initialInductive(pin)
 while True:
     detectMetal()
