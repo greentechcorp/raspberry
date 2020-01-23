@@ -15,13 +15,13 @@ def detectMetal():
   if(GPIOpin != -1):
     state = GPIO.input(GPIOpin)
     if state:
-      print("No Object")
+	  print("Object Detected")
     else:
-      print("Metal Detected")
+      print("No Object")
   else:
     print("Please Initialize Input Pin")
     
-pin = 21
+pin = 20
 initialInductive(pin)
 while True:
     detectMetal()

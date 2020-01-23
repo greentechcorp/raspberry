@@ -1,6 +1,6 @@
 import time
 import VL53L0X
-import subprocess
+import camera
 import RPi.GPIO as GPIO
 
 #box sizes
@@ -107,8 +107,7 @@ def objectFound():
     print("There an object")
     print("The size is:")
     size()
-    cam = subprocess.Popen('./pic.sh')
-    cam.wait()
+    camera.take_picture()
     laser(1)
     greenLED()
 

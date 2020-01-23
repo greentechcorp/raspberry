@@ -14,13 +14,15 @@ GPIO_ECHO_2 = 22
 #set GPIO direction (IN / OUT)
 GPIO.setup(GPIO_TRIGGER_1, GPIO.OUT)
 GPIO.setup(GPIO_ECHO_1, GPIO.IN)
+GPIO.output(GPIO_TRIGGER_1, False)
 
 GPIO.setup(GPIO_TRIGGER_2, GPIO.OUT)
 GPIO.setup(GPIO_ECHO_2, GPIO.IN)
+GPIO.output(GPIO_TRIGGER_2, False)
  
 def distance(trigger,echo):
+    print("Sent trigger for distance measurement")
     GPIO.output(trigger, True)
- 
     time.sleep(0.00001)
     GPIO.output(trigger, False)
  
@@ -29,9 +31,10 @@ def distance(trigger,echo):
  
     while GPIO.input(echo) == 0:
         StartTime = time.time()
- 
+
     while GPIO.input(echo) == 1:
         StopTime = time.time()
+    print("Received distance measurement")
     TimeElapsed = StopTime - StartTime
     distance = (TimeElapsed * 34300) / 2
  
@@ -41,6 +44,8 @@ def distance(trigger,echo):
  
 if __name__ == '__main__':
     try:
+        print("Sensors settling...")
+        time.sleep(2) 
         while True:
             dist2 = distance(GPIO_TRIGGER_1,GPIO_ECHO_1)
             dist1 = distance(GPIO_TRIGGER_2,GPIO_ECHO_2)
