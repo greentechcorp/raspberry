@@ -1,5 +1,5 @@
 import time
-import VL53L0X
+import tof
 import camera
 import RPi.GPIO as GPIO
 
@@ -28,22 +28,21 @@ GPIO.output(red,GPIO.LOW)
 GPIO.output(green,GPIO.HIGH)
 GPIO.output(laser,GPIO.HIGH)
  
-#GPIO and Setup for HC-SR04
-GPIO_TRIGGER_1 = 18
-GPIO_ECHO_1 = 23
-GPIO_TRIGGER_2 = 17
-GPIO_ECHO_2 = 22
- 
-GPIO.setup(GPIO_TRIGGER_1, GPIO.OUT)
-GPIO.setup(GPIO_ECHO_1, GPIO.IN)
-GPIO.setup(GPIO_TRIGGER_2, GPIO.OUT)
-GPIO.setup(GPIO_ECHO_2, GPIO.IN)
+#GPIO and Setup for tof distance sensor
+# GPIO for Sensor 1 shutdown pin
+sensor1_shutdown = 17
+sensor1_address = 0x2B
+# GPIO for Sensor 2 shutdown pin
+sensor2_shutdown = 27
+sensor2_address = 0x2D
+# GPIO for Sensor 3 shutdown pin
+sensor3_shutdown = 22
+sensor3_address = 0x2F
 
-# Create a VL53L0X object
-tof = VL53L0X.VL53L0X()
-
-# Start ranging
-tof.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)
+tof1 = tof.tof_sensor(sensor1_shutdown, 0x2B)
+tof2 = tof.tof_sensor(sensor2_shutdown, 0x2D)
+tof3 = tof.tof_sensor(sensor3_shutdown, 0x2F)
+tof_timing = tof1.get_timing()
 
 def laser(x):
     if (x==1):
@@ -70,35 +69,14 @@ def Blink():
     time.sleep(0.1)
     greenLED()
 
-
-def distanceHCSR04(trigger,echo):
-    GPIO.output(trigger, True)
- 
-    time.sleep(0.00001)
-    GPIO.output(trigger, False)
- 
-    StartTime = time.time()
-    StopTime = time.time()
- 
-    while GPIO.input(echo) == 0:
-        StartTime = time.time()
- 
-    while GPIO.input(echo) == 1:
-        StopTime = time.time()
-
-    TimeElapsed = StopTime - StartTime
-    distance = int((TimeElapsed * 343000) / 2)
- 
-    return distance
-
 def size():
     time.sleep(1)
-    dist1 = distanceHCSR04(GPIO_TRIGGER_1,GPIO_ECHO_1)
-    dist2 = distanceHCSR04(GPIO_TRIGGER_2,GPIO_ECHO_2)
-    dist3 = tof.get_distance()
-    print ("Sensor 1: ", dist1)
-    print ("Sensor 2: ", dist2)
-    print ("Sensor 3: ", dist3)
+    dist1 = tof1.get_distance(tof_timing)
+    dist2 = tof2.get_distance(tof_timing)
+    dist3 = tof3.get_distance(tof_timing)
+    print("Sensor 1: ", dist1)
+    print("Sensor 2: ", dist2)
+    print("Sensor 3: ", dist3)
 
 
 def objectFound():
